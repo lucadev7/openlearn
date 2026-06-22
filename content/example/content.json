@@ -1,0 +1,29 @@
+{
+  "decks": [{ "id": "geo", "name": "Allgemeinwissen: Geografie", "parentId": null }],
+  "cards": [
+    {
+      "deckId": "geo",
+      "type": "single",
+      "promptMd": "Welcher Fluss gilt gemeinhin als der längste der Welt?",
+      "payload": { "options": ["Nil", "Amazonas", "Jangtse", "Mississippi"], "correct": 1 },
+      "explanationMd": "Nach gängiger Messung gilt der Amazonas als längster Fluss; je nach Quellbestimmung wird auch der Nil genannt.",
+      "difficulty": 2
+    },
+    {
+      "deckId": "geo",
+      "type": "truefalse",
+      "promptMd": "Australien ist sowohl ein Land als auch ein Kontinent.",
+      "payload": { "answer": true },
+      "explanationMd": "Australien wird als eigenständiger Kontinent und zugleich als Staat geführt.",
+      "difficulty": 1
+    },
+    {
+      "deckId": "geo",
+      "type": "cloze",
+      "promptMd": "Die Hauptstadt von {{Japan}} ist Tokio.",
+      "payload": { "answers": ["Japan"] },
+      "explanationMd": "Tokio ist seit 1868 die Hauptstadt Japans.",
+      "difficulty": 1
+    }
+  ]
+}

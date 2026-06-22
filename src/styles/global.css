@@ -1,0 +1,180 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Theme tokens. A theme = a set of --ol-* RGB triplets (space-separated so
+   Tailwind's `rgb(var(--x) / <alpha-value>)` opacity modifiers keep working).
+   Crafted palettes — deliberately NOT the default purple-blue AI-gradient look.
+   ──────────────────────────────────────────────────────────────────────── */
+:root,
+[data-theme="aurora"] {
+  --ol-bg: 13 16 28;
+  --ol-surface: 23 27 43;
+  --ol-surface-2: 32 38 60;
+  --ol-border: 58 66 96;
+  --ol-text: 232 235 245;
+  --ol-muted: 150 158 182;
+  --ol-primary: 129 140 248;
+  --ol-primary-soft: 99 102 241;
+  --ol-accent: 45 212 191;
+  --ol-success: 52 211 153;
+  --ol-warn: 251 191 36;
+  --ol-danger: 248 113 113;
+  --ol-shadow: 0 0 0;
+}
+
+[data-theme="paper"] {
+  --ol-bg: 244 245 250;
+  --ol-surface: 255 255 255;
+  --ol-surface-2: 248 249 252;
+  --ol-border: 221 225 234;
+  --ol-text: 24 28 42;
+  --ol-muted: 96 104 124;
+  --ol-primary: 79 70 229;
+  --ol-primary-soft: 99 102 241;
+  --ol-accent: 13 148 136;
+  --ol-success: 16 185 129;
+  --ol-warn: 202 138 4;
+  --ol-danger: 220 38 38;
+  --ol-shadow: 30 41 70;
+}
+
+@layer base {
+  * {
+    border-color: rgb(var(--ol-border) / 0.6);
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-bg text-text font-sans antialiased;
+    margin: 0;
+    overflow: hidden; /* the app shell owns scrolling regions */
+    font-feature-settings: "cv02", "cv03", "ss01";
+  }
+
+  /* A restrained aurora backdrop for the dark theme — subtle, not a light show. */
+  [data-theme="aurora"] body {
+    background-image:
+      radial-gradient(60rem 60rem at 12% -10%, rgb(99 102 241 / 0.16), transparent 60%),
+      radial-gradient(45rem 45rem at 105% 0%, rgb(45 212 191 / 0.12), transparent 55%),
+      radial-gradient(40rem 40rem at 50% 120%, rgb(129 140 248 / 0.1), transparent 60%);
+    background-attachment: fixed;
+  }
+
+  :focus-visible {
+    outline: 2px solid rgb(var(--ol-primary) / 0.9);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgb(var(--ol-border) / 0.8);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--ol-muted) / 0.7);
+    background-clip: content-box;
+  }
+}
+
+@layer components {
+  /* Glassmorphism — used purposefully on raised surfaces, not everywhere. */
+  .glass {
+    background: rgb(var(--ol-surface) / 0.62);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    border: 1px solid rgb(var(--ol-border) / 0.55);
+    box-shadow:
+      0 8px 32px -12px rgb(var(--ol-shadow) / 0.5),
+      inset 0 1px 0 0 rgb(255 255 255 / 0.05);
+  }
+
+  .glass-2 {
+    background: rgb(var(--ol-surface-2) / 0.7);
+    backdrop-filter: blur(12px) saturate(130%);
+    -webkit-backdrop-filter: blur(12px) saturate(130%);
+    border: 1px solid rgb(var(--ol-border) / 0.5);
+  }
+
+  .card {
+    @apply rounded-2xl;
+    background: rgb(var(--ol-surface) / 0.62);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    border: 1px solid rgb(var(--ol-border) / 0.55);
+    box-shadow:
+      0 8px 32px -12px rgb(var(--ol-shadow) / 0.5),
+      inset 0 1px 0 0 rgb(255 255 255 / 0.05);
+  }
+
+  .input {
+    @apply w-full rounded-xl bg-surface-2/70 border border-border/60 px-3.5 py-2.5
+      text-text placeholder:text-muted/70 transition
+      focus:border-primary/70 focus:ring-2 focus:ring-primary/25 outline-none;
+  }
+
+  .label {
+    @apply block text-sm font-medium text-muted mb-1.5;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium
+      bg-surface-2/80 border border-border/60 text-muted;
+  }
+}
+
+/* Honor reduced-motion at the CSS level too (Framer Motion handles JS-driven
+   animation via <MotionConfig>; this covers CSS transitions/animations). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Markdown / code rendering */
+.prose-ol {
+  @apply text-text/90 leading-relaxed;
+}
+.prose-ol p {
+  @apply my-2;
+}
+.prose-ol ul {
+  @apply list-disc pl-5 my-2;
+}
+.prose-ol ol {
+  @apply list-decimal pl-5 my-2;
+}
+.prose-ol code {
+  @apply font-mono text-[0.85em] rounded bg-surface-2/80 px-1.5 py-0.5;
+}
+.prose-ol pre {
+  @apply font-mono text-sm rounded-xl bg-[rgb(15_18_30)] text-[rgb(226_232_240)] p-4 my-3 overflow-x-auto border border-border/50;
+}
+.prose-ol pre code {
+  @apply bg-transparent p-0;
+}
+.prose-ol h1,
+.prose-ol h2,
+.prose-ol h3 {
+  @apply font-semibold mt-4 mb-2;
+}
+.prose-ol a {
+  @apply text-primary underline underline-offset-2;
+}

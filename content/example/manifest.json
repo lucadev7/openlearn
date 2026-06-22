@@ -1,0 +1,9 @@
+{
+  "formatVersion": 1,
+  "name": "Beispiel: Allgemeinwissen",
+  "author": "OpenLearn",
+  "license": "CC0-1.0",
+  "language": "de",
+  "version": "1.0.0",
+  "description": "Kleiner Beispiel-Pack, der das Content-Pack-Format zeigt."
+}
