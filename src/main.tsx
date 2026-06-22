@@ -12,6 +12,10 @@ import Decks from "./pages/Decks";
 import DeckDetail from "./pages/DeckDetail";
 import CardEditor from "./pages/CardEditor";
 import Settings from "./pages/Settings";
+import StatsPage from "./pages/Stats";
+import Achievements from "./pages/Achievements";
+import Tutor from "./pages/Tutor";
+import Material from "./pages/Material";
 import { ComingSoon } from "./pages/ComingSoon";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -28,26 +32,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <Route path="/cards/:id/edit" element={<CardEditor />} />
             <Route path="/settings" element={<Settings />} />
 
-            <Route
-              path="/tutor"
-              element={
-                <ComingSoon
-                  phase={2}
-                  title="KI-Tutor"
-                  desc="Ein kontextbezogener Dialog-Tutor, der deine Schwächen kennt, Konzepte erklärt, sokratisch nachfragt und direkt Karten erzeugt — geerdet auf deinen eigenen Inhalten."
-                />
-              }
-            />
-            <Route
-              path="/material"
-              element={
-                <ComingSoon
-                  phase={2}
-                  title="Material → Karten"
-                  desc="Füge eigene Skripte, Notizen oder PDFs ein — die KI extrahiert automatisch Lernkarten und Fragen daraus (mit Review-Queue, du behältst die Kontrolle)."
-                />
-              }
-            />
+            <Route path="/tutor" element={<Tutor />} />
+            <Route path="/material" element={<Material />} />
             <Route
               path="/paths"
               element={
@@ -78,26 +64,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                 />
               }
             />
-            <Route
-              path="/stats"
-              element={
-                <ComingSoon
-                  phase={6}
-                  title="Statistiken"
-                  desc="Retention-Verlauf, XP über Zeit, Trefferquote je Thema und eine Heatmap deiner Lernaktivität."
-                />
-              }
-            />
-            <Route
-              path="/achievements"
-              element={
-                <ComingSoon
-                  phase={5}
-                  title="Achievements"
-                  desc="Abzeichen für Lernverhalten und Themenmeisterschaft, mit Fortschritt, Stufen und geheimen Badges."
-                />
-              }
-            />
+            <Route path="/stats" element={<StatsPage />} />
+            <Route path="/achievements" element={<Achievements />} />
             <Route
               path="/shop"
               element={

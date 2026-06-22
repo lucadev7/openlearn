@@ -17,8 +17,11 @@ pub enum AppError {
     #[error("Schlüsselspeicher-Fehler: {0}")]
     Keyring(String),
 
-    #[error("Funktion noch nicht verfügbar: {0}")]
-    NotImplemented(String),
+    #[error("Netzwerkfehler: {0}")]
+    Network(String),
+
+    #[error("KI-Fehler: {0}")]
+    Ai(String),
 
     #[error("{0}")]
     Other(String),

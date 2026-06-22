@@ -155,6 +155,9 @@ pub struct Settings {
     pub language: String,
     pub default_provider: Option<String>,
     pub default_model: Option<String>,
+    /// Base URL for the OpenAI-compatible provider (e.g. Ollama / LM Studio /
+    /// OpenRouter). Ignored for the first-party providers.
+    pub openai_base_url: Option<String>,
     pub cost_confirm: bool,
     pub onboarded: bool,
 }
@@ -169,6 +172,7 @@ impl Default for Settings {
             language: "de".into(),
             default_provider: None,
             default_model: None,
+            openai_base_url: None,
             cost_confirm: true,
             onboarded: false,
         }
@@ -188,4 +192,177 @@ pub struct ProviderStatus {
 pub struct AiStatus {
     pub providers: Vec<ProviderStatus>,
     pub any_configured: bool,
+}
+
+// ---------------------------------------------------------------------------
+// Statistics
+// ---------------------------------------------------------------------------
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DayStat {
+    pub day: String,
+    pub reviews: i64,
+    pub correct: i64,
+}
+
+#[derive(Debug, Clone, Default, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RatingCount {
+    pub again: i64,
+    pub hard: i64,
+    pub good: i64,
+    pub easy: i64,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DeckAccuracy {
+    pub deck_id: String,
+    pub name: String,
+    pub reviews: i64,
+    pub correct: i64,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Stats {
+    pub total_reviews: i64,
+    pub total_correct: i64,
+    pub reviews_today: i64,
+    pub active_days: i64,
+    pub total_cards: i64,
+    pub total_decks: i64,
+    pub new_cards: i64,
+    pub young_cards: i64,
+    pub mature_cards: i64,
+    pub suspended_cards: i64,
+    pub xp_total: i64,
+    pub daily: Vec<DayStat>,
+    pub ratings: RatingCount,
+    pub by_deck: Vec<DeckAccuracy>,
+}
+
+// ---------------------------------------------------------------------------
+// Achievements
+// ---------------------------------------------------------------------------
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Achievement {
+    pub id: String,
+    pub title: String,
+    pub description: String,
+    pub icon: String,
+    pub tier: String,
+    pub progress: i64,
+    pub target: i64,
+    pub unlocked: bool,
+}
+
+// ---------------------------------------------------------------------------
+// Content packs (shareable .olpack files)
+// ---------------------------------------------------------------------------
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PackManifest {
+    #[serde(default = "one")]
+    pub format_version: i64,
+    pub name: String,
+    #[serde(default)]
+    pub author: Option<String>,
+    #[serde(default)]
+    pub license: Option<String>,
+    #[serde(default)]
+    pub language: Option<String>,
+    #[serde(default)]
+    pub version: Option<String>,
+    #[serde(default)]
+    pub description: Option<String>,
+}
+
+fn one() -> i64 {
+    1
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PackDeck {
+    pub id: String,
+    pub name: String,
+    #[serde(default)]
+    pub parent_id: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PackCard {
+    pub deck_id: String,
+    #[serde(rename = "type")]
+    pub card_type: String,
+    pub prompt_md: String,
+    #[serde(default)]
+    pub explanation_md: Option<String>,
+    #[serde(default = "default_payload")]
+    pub payload: Value,
+    #[serde(default)]
+    pub difficulty: Option<i64>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Pack {
+    #[serde(default)]
+    pub manifest: Option<PackManifest>,
+    #[serde(default)]
+    pub decks: Vec<PackDeck>,
+    #[serde(default)]
+    pub cards: Vec<PackCard>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ImportSummary {
+    pub decks: i64,
+    pub cards: i64,
+    pub pack_name: Option<String>,
+}
+
+// ---------------------------------------------------------------------------
+// AI chat / generation
+// ---------------------------------------------------------------------------
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ChatMessage {
+    pub role: String,
+    pub content: String,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ChatReply {
+    pub content: String,
+    pub provider: String,
+    pub model: String,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct GeneratedCard {
+    #[serde(rename = "type")]
+    pub card_type: String,
+    pub prompt_md: String,
+    pub explanation_md: Option<String>,
+    pub payload: Value,
+    pub difficulty: i64,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct GradeResult {
+    pub correct: bool,
+    pub score: i64,
+    pub feedback: String,
 }

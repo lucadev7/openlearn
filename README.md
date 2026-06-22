@@ -29,13 +29,18 @@ Fachwissen oder einfach eigene Themen.
 
 **Eigene Inhalte**
 - Decks und Karten direkt in der App anlegen und bearbeiten (mit Live-Vorschau, Markdown, Code)
-- Inhalte als Datei teilen und importieren *(Content-Packs — in Arbeit)*
+- Inhalte als Datei teilen und importieren (Content-Packs) — inklusive mitgeliefertem Beispiel-Pack
+
+**Fortschritt**
+- Statistiken: Aktivitäts-Heatmap, Verlauf, Trefferquote je Deck, Karten-Reife
+- Achievements mit Fortschrittsanzeige
+- Backup & Wiederherstellung der gesamten lokalen Datenbank in eine Datei
 
 **KI (optional, du bringst den Key mit)**
 - Tutor-Chat, der erklärt und nachfragt
-- Karten automatisch aus eigenem Material (Text/PDF) erzeugen
-- Bewertung offener Antworten mit Feedback
-- Adaptive Lernpfade aus deinem Ziel und deinen Schwächen
+- Karten automatisch aus eigenem Material erzeugen (mit Review-Queue)
+- Bewertung offener Antworten (Kurzantwort-Karten) mit Feedback
+- Adaptive Lernpfade aus deinem Ziel und deinen Schwächen *(geplant)*
 
 > KI ist nie Voraussetzung. Ohne Key bleibt der Lernkern voll nutzbar.
 
@@ -99,14 +104,16 @@ Mehr Details in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Status
 
-Früh, aber nutzbar. Der Lernkern (Decks, Karten, Wiederholung, Fortschritt) steht; die
-KI-Funktionen und das Teilen von Inhalten werden schrittweise ergänzt.
+Nutzbar. Der Lernkern steht, dazu Statistiken, Achievements, Content-Packs, Backup/Restore und die
+KI-Funktionen (mit eigenem API-Key). Weitere Bausteine folgen schrittweise.
 
 - [x] Lernkern: Decks/Karten, Spaced Repetition, XP/Level/Streak
-- [ ] KI: Tutor, Material → Karten, Bewertung
-- [ ] Content-Packs: Import/Export, Beispiel-Inhalte
-- [ ] Lernpfade, mündliche Prüfung, Statistiken
-- [ ] Backup/Restore, Mehrsprachigkeit, Politur
+- [x] KI: Tutor, Material → Karten, Antwort-Bewertung (eigener API-Key)
+- [x] Content-Packs: Import/Export, Beispiel-Inhalte
+- [x] Statistiken & Achievements
+- [x] Backup/Restore
+- [ ] Lernpfade, mündliche Prüfung, Tests-Simulation
+- [ ] Shop/Themes, Mehrsprachigkeit, weitere Politur
 
 ## Mitmachen
 

@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { save } from "@tauri-apps/plugin-dialog";
 import {
   ArrowLeft,
   Check,
+  Download,
   Eye,
   EyeOff,
   GraduationCap,
@@ -61,6 +63,22 @@ export default function DeckDetail() {
       await api.deleteDeck(id);
       toast("Deck gelöscht.", "success");
       navigate("/decks");
+    } catch (e) {
+      toast(errMsg(e), "error");
+    }
+  };
+
+  const exportDeck = async () => {
+    if (!deck) return;
+    try {
+      const path = await save({
+        title: "Deck exportieren",
+        defaultPath: `${deck.name}.json`,
+        filters: [{ name: "OpenLearn-Pack", extensions: ["json"] }],
+      });
+      if (!path) return;
+      await api.exportPack([deck.id], path);
+      toast("Deck exportiert.", "success");
     } catch (e) {
       toast(errMsg(e), "error");
     }
@@ -135,6 +153,9 @@ export default function DeckDetail() {
           </Button>
           <Button variant="subtle" onClick={() => navigate(`/decks/${deck.id}/cards/new`)}>
             <Plus size={18} /> Karte
+          </Button>
+          <Button variant="ghost" onClick={exportDeck} title="Deck exportieren">
+            <Download size={18} />
           </Button>
           <Button variant="ghost" className="text-danger" onClick={removeDeck} title="Deck löschen">
             <Trash2 size={18} />

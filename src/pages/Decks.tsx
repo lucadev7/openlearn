@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Library, Plus, X } from "lucide-react";
+import { Download, Library, Plus, Sparkles, Upload, X } from "lucide-react";
+import { open, save } from "@tauri-apps/plugin-dialog";
 
 import { api, errMsg } from "@/lib/api";
 import type { DeckWithCounts } from "@/lib/types";
@@ -41,14 +42,70 @@ export default function Decks() {
     }
   };
 
+  const importPack = async () => {
+    try {
+      const path = await open({
+        multiple: false,
+        title: "Content-Pack wählen",
+        filters: [{ name: "OpenLearn-Pack", extensions: ["json", "olpack"] }],
+      });
+      if (!path || typeof path !== "string") return;
+      const summary = await api.importPack(path);
+      toast(
+        `Importiert: ${summary.decks} Decks, ${summary.cards} Karten${
+          summary.packName ? ` — ${summary.packName}` : ""
+        }.`,
+        "success"
+      );
+      load();
+    } catch (e) {
+      toast(errMsg(e), "error");
+    }
+  };
+
+  const loadExample = async () => {
+    try {
+      const summary = await api.importExample();
+      toast(`Beispiel geladen: ${summary.cards} Karten.`, "success");
+      load();
+    } catch (e) {
+      toast(errMsg(e), "error");
+    }
+  };
+
+  const exportAll = async () => {
+    try {
+      const path = await save({
+        title: "Alle Decks exportieren",
+        defaultPath: "openlearn-pack.json",
+        filters: [{ name: "OpenLearn-Pack", extensions: ["json"] }],
+      });
+      if (!path) return;
+      await api.exportPack(null, path);
+      toast("Alle Decks exportiert.", "success");
+    } catch (e) {
+      toast(errMsg(e), "error");
+    }
+  };
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-bold">Decks</h1>
-        <Button onClick={() => setCreating((v) => !v)}>
-          {creating ? <X size={18} /> : <Plus size={18} />}
-          {creating ? "Abbrechen" : "Neues Deck"}
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="subtle" onClick={importPack}>
+            <Upload size={16} /> Importieren
+          </Button>
+          {decks && decks.length > 0 && (
+            <Button variant="subtle" onClick={exportAll}>
+              <Download size={16} /> Exportieren
+            </Button>
+          )}
+          <Button onClick={() => setCreating((v) => !v)}>
+            {creating ? <X size={18} /> : <Plus size={18} />}
+            {creating ? "Abbrechen" : "Neues Deck"}
+          </Button>
+        </div>
       </div>
 
       {creating && (
@@ -75,11 +132,16 @@ export default function Decks() {
         <EmptyState
           icon={<Library size={40} />}
           title="Noch keine Decks"
-          desc="Lege dein erstes Deck an und fülle es mit Karten — oder importiere später einen Content-Pack."
+          desc="Lege dein erstes Deck an, importiere einen Content-Pack — oder lade das Beispiel, um sofort loszulegen."
           action={
-            <Button onClick={() => setCreating(true)}>
-              <Plus size={18} /> Deck anlegen
-            </Button>
+            <div className="flex flex-wrap justify-center gap-3">
+              <Button onClick={() => setCreating(true)}>
+                <Plus size={18} /> Deck anlegen
+              </Button>
+              <Button variant="subtle" onClick={loadExample}>
+                <Sparkles size={18} /> Beispiel laden
+              </Button>
+            </div>
           }
         />
       ) : (

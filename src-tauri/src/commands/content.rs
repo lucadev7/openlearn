@@ -1,7 +1,7 @@
 use tauri::State;
 
-use crate::error::AppResult;
-use crate::models::{Card, CardInput, Deck, DeckWithCounts};
+use crate::error::{AppError, AppResult};
+use crate::models::{Card, CardInput, Deck, DeckWithCounts, ImportSummary};
 use crate::services::content;
 use crate::state::AppState;
 
@@ -71,4 +71,34 @@ pub fn content_set_suspended(
 pub fn content_delete_card(state: State<AppState>, id: String) -> AppResult<()> {
     let conn = state.db.lock().unwrap();
     content::delete_card(&conn, &id)
+}
+
+#[tauri::command]
+pub fn content_export_pack(
+    state: State<AppState>,
+    deck_ids: Option<Vec<String>>,
+    path: String,
+) -> AppResult<()> {
+    let pack = {
+        let conn = state.db.lock().unwrap();
+        content::export_pack(&conn, deck_ids)?
+    };
+    let json = serde_json::to_string_pretty(&pack)?;
+    std::fs::write(&path, json)
+        .map_err(|e| AppError::Other(format!("Datei konnte nicht geschrieben werden: {e}")))
+}
+
+#[tauri::command]
+pub fn content_import_pack(state: State<AppState>, path: String) -> AppResult<ImportSummary> {
+    let data = std::fs::read_to_string(&path)
+        .map_err(|e| AppError::Other(format!("Datei konnte nicht gelesen werden: {e}")))?;
+    let pack = content::parse_pack(&data)?;
+    let mut conn = state.db.lock().unwrap();
+    content::import_pack(&mut conn, pack)
+}
+
+#[tauri::command]
+pub fn content_import_example(state: State<AppState>) -> AppResult<ImportSummary> {
+    let mut conn = state.db.lock().unwrap();
+    content::import_example(&mut conn)
 }

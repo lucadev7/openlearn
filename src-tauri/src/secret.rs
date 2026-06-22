@@ -43,6 +43,19 @@ pub fn has_key(provider: &str) -> bool {
     }
 }
 
+/// Read the stored API key for a provider. Returns a friendly error when none
+/// is configured so the UI can nudge the user to the settings.
+pub fn get_key(provider: &str) -> AppResult<String> {
+    validate_provider(provider)?;
+    match entry(provider)?.get_password() {
+        Ok(key) => Ok(key),
+        Err(keyring::Error::NoEntry) => Err(AppError::Invalid(format!(
+            "Für {provider} ist kein API-Key hinterlegt. Trage ihn unter Einstellungen → KI ein."
+        ))),
+        Err(e) => Err(AppError::Keyring(e.to_string())),
+    }
+}
+
 pub fn delete_key(provider: &str) -> AppResult<()> {
     validate_provider(provider)?;
     match entry(provider)?.delete_password() {

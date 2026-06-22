@@ -34,6 +34,7 @@ export default function CardEditor() {
   const [numValue, setNumValue] = useState("");
   const [numTolerance, setNumTolerance] = useState("0");
   const [numUnit, setNumUnit] = useState("");
+  const [shortExpected, setShortExpected] = useState("");
 
   useEffect(() => {
     if (!editId) return;
@@ -60,6 +61,8 @@ export default function CardEditor() {
           setNumValue(String(p.value ?? ""));
           setNumTolerance(String(p.tolerance ?? "0"));
           setNumUnit((p.unit as string) ?? "");
+        } else if (c.type === "short_text") {
+          setShortExpected((p.expected as string) ?? "");
         }
       })
       .catch((e) => toast(errMsg(e), "error"))
@@ -92,6 +95,8 @@ export default function CardEditor() {
         const tolerance = Number(numTolerance.replace(",", ".")) || 0;
         return { value, tolerance, unit: numUnit.trim() || undefined };
       }
+      case "short_text":
+        return { expected: shortExpected.trim() };
       default:
         return {};
     }
@@ -214,6 +219,8 @@ export default function CardEditor() {
               setNumTolerance={setNumTolerance}
               numUnit={numUnit}
               setNumUnit={setNumUnit}
+              shortExpected={shortExpected}
+              setShortExpected={setShortExpected}
             />
           </GlassCard>
 
@@ -299,6 +306,8 @@ interface PayloadEditorProps {
   setNumTolerance: (v: string) => void;
   numUnit: string;
   setNumUnit: (v: string) => void;
+  shortExpected: string;
+  setShortExpected: (v: string) => void;
 }
 
 function PayloadEditor(p: PayloadEditorProps) {
@@ -432,6 +441,20 @@ function PayloadEditor(p: PayloadEditorProps) {
             onChange={(e) => p.setNumUnit(e.target.value)}
           />
         </div>
+      </div>
+    );
+  }
+
+  if (p.type === "short_text") {
+    return (
+      <div>
+        <label className="label">Musterlösung (optional, hilft der KI-Bewertung)</label>
+        <textarea
+          className="input min-h-[80px] font-mono text-sm"
+          value={p.shortExpected}
+          onChange={(e) => p.setShortExpected(e.target.value)}
+          placeholder="Die erwartete Antwort oder Stichpunkte, an denen sich die KI orientiert."
+        />
       </div>
     );
   }

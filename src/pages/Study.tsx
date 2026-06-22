@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Check, PartyPopper, Sparkles, X } from "lucide-react";
 
 import { api, errMsg } from "@/lib/api";
-import type { Rating, StudyCard } from "@/lib/types";
+import type { GradeResult, Rating, StudyCard } from "@/lib/types";
 import { Markdown } from "@/components/Markdown";
 import { Button, EmptyState, GlassCard, Spinner } from "@/components/ui";
 import { useStore } from "@/store/useStore";
@@ -38,6 +38,9 @@ export default function Study() {
   const [numInput, setNumInput] = useState("");
   const [cloze, setCloze] = useState<string[]>([]);
   const [correct, setCorrect] = useState<boolean | null>(null);
+  const [shortAns, setShortAns] = useState("");
+  const [grading, setGrading] = useState(false);
+  const [gradeResult, setGradeResult] = useState<GradeResult | null>(null);
 
   const current = queue[pos];
 
@@ -47,6 +50,9 @@ export default function Study() {
     setTf(null);
     setNumInput("");
     setCorrect(null);
+    setShortAns("");
+    setGradeResult(null);
+    setGrading(false);
     if (c && c.card.type === "cloze") {
       const n = ((c.card.payload as { answers?: string[] }).answers?.length) ?? 1;
       setCloze(Array(n).fill(""));
@@ -111,13 +117,34 @@ export default function Study() {
         return numInput.trim() !== "";
       case "cloze":
         return cloze.some((x) => x.trim() !== "");
+      case "short_text":
+        return shortAns.trim() !== "";
       default:
         return true;
     }
   })();
 
-  const reveal = () => {
-    if (phase !== "answering") return;
+  const reveal = async () => {
+    if (phase !== "answering" || !current) return;
+    if (current.card.type === "short_text") {
+      const p = current.card.payload as Record<string, unknown>;
+      setGrading(true);
+      try {
+        const g = await api.aiGradeAnswer(
+          current.card.promptMd,
+          (p.expected as string) || current.card.explanationMd || null,
+          shortAns
+        );
+        setGradeResult(g);
+        setCorrect(g.correct);
+        setPhase("revealed");
+      } catch (e) {
+        toast(errMsg(e), "error");
+      } finally {
+        setGrading(false);
+      }
+      return;
+    }
     setCorrect(grade());
     setPhase("revealed");
   };
@@ -367,13 +394,29 @@ export default function Study() {
                 </div>
               )}
 
+              {current.card.type === "short_text" && (
+                <div>
+                  <textarea
+                    autoFocus
+                    disabled={revealed}
+                    className="input min-h-[120px] resize-y"
+                    value={shortAns}
+                    onChange={(e) => setShortAns(e.target.value)}
+                    onKeyDown={(e) => e.stopPropagation()}
+                    placeholder="Deine Antwort in eigenen Worten…"
+                  />
+                  <p className="mt-1.5 text-xs text-muted">
+                    Wird beim Aufdecken von der KI bewertet.
+                  </p>
+                </div>
+              )}
+
               {grade() === null &&
-                !["single", "multi", "truefalse", "numeric", "cloze"].includes(
+                !["single", "multi", "truefalse", "numeric", "cloze", "short_text"].includes(
                   current.card.type
                 ) && (
                   <p className="text-sm text-muted">
-                    Selbstkontrolle: Überlege deine Antwort und decke dann auf. (KI-Bewertung folgt
-                    in Phase 2.)
+                    Selbstkontrolle: Überlege deine Antwort und decke dann auf.
                   </p>
                 )}
             </div>
@@ -393,6 +436,15 @@ export default function Study() {
                   >
                     {correct ? <Check size={18} /> : <X size={18} />}
                     {correct ? "Richtig!" : "Noch nicht ganz."}
+                  </div>
+                )}
+                {current.card.type === "short_text" && gradeResult && (
+                  <div className="mb-3 rounded-xl border border-border/50 bg-surface-2/40 p-3">
+                    <div className="mb-2 flex items-center justify-between">
+                      <span className="text-sm font-semibold">KI-Bewertung</span>
+                      <span className="chip">{gradeResult.score}/100</span>
+                    </div>
+                    <Markdown>{gradeResult.feedback}</Markdown>
                   </div>
                 )}
                 {current.card.type === "cloze" && (
@@ -416,8 +468,17 @@ export default function Study() {
 
       {/* Action bar */}
       {!revealed ? (
-        <Button className="w-full" size="lg" disabled={!canCheck} onClick={reveal}>
-          Aufdecken <span className="ml-1 text-xs opacity-70">(Leertaste)</span>
+        <Button className="w-full" size="lg" disabled={!canCheck || grading} onClick={reveal}>
+          {grading ? (
+            <Spinner className="h-5 w-5" />
+          ) : (
+            <>
+              Aufdecken
+              {current.card.type !== "short_text" && (
+                <span className="ml-1 text-xs opacity-70">(Leertaste)</span>
+              )}
+            </>
+          )}
         </Button>
       ) : (
         <div className="grid grid-cols-4 gap-2">

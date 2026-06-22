@@ -134,6 +134,7 @@ export interface Settings {
   language: string;
   defaultProvider: string | null;
   defaultModel: string | null;
+  openaiBaseUrl: string | null;
   costConfirm: boolean;
   onboarded: boolean;
 }
@@ -147,4 +148,83 @@ export interface ProviderStatus {
 export interface AiStatus {
   providers: ProviderStatus[];
   anyConfigured: boolean;
+}
+
+export interface DayStat {
+  day: string;
+  reviews: number;
+  correct: number;
+}
+
+export interface RatingCount {
+  again: number;
+  hard: number;
+  good: number;
+  easy: number;
+}
+
+export interface DeckAccuracy {
+  deckId: string;
+  name: string;
+  reviews: number;
+  correct: number;
+}
+
+export interface Stats {
+  totalReviews: number;
+  totalCorrect: number;
+  reviewsToday: number;
+  activeDays: number;
+  totalCards: number;
+  totalDecks: number;
+  newCards: number;
+  youngCards: number;
+  matureCards: number;
+  suspendedCards: number;
+  xpTotal: number;
+  daily: DayStat[];
+  ratings: RatingCount;
+  byDeck: DeckAccuracy[];
+}
+
+export interface Achievement {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  tier: "bronze" | "silver" | "gold" | string;
+  progress: number;
+  target: number;
+  unlocked: boolean;
+}
+
+export interface ImportSummary {
+  decks: number;
+  cards: number;
+  packName: string | null;
+}
+
+export interface ChatMessage {
+  role: "user" | "assistant" | "system";
+  content: string;
+}
+
+export interface ChatReply {
+  content: string;
+  provider: string;
+  model: string;
+}
+
+export interface GeneratedCard {
+  type: string;
+  promptMd: string;
+  explanationMd: string | null;
+  payload: CardPayload;
+  difficulty: number;
+}
+
+export interface GradeResult {
+  correct: boolean;
+  score: number;
+  feedback: string;
 }

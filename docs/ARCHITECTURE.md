@@ -8,11 +8,11 @@ React (Vite + TS + Tailwind + Framer Motion)
    ▼
 Rust-Backend  =  Source of Truth
    ├─ commands/   dünne IPC-Schicht (#[tauri::command])
-   ├─ services/   Domänenlogik: content, study, gamification, settings
+   ├─ services/   Domänenlogik: content, study, gamification, settings, stats, achievements, data
    ├─ scheduler   Spaced-Repetition (Trait + SM-2; FSRS als Upgrade geplant)
    ├─ db/         SQLite (rusqlite, bundled) + Migrationsrunner
    ├─ secret      API-Keys im OS-Keychain (keyring)
-   └─ ai/         KI-Provider-Schicht (Status heute; Calls ab Phase 2)
+   └─ ai/         KI-Provider-Schicht (Gemini / OpenAI / Anthropic / OpenAI-kompatibel)
    ▼
 SQLite (openlearn.db)  ·  OS-Keychain  ·  HTTPS → KI-Provider (nur konfigurierte)
 ```
@@ -31,8 +31,8 @@ SQLite (openlearn.db)  ·  OS-Keychain  ·  HTTPS → KI-Provider (nur konfiguri
 
 ## Bewusste Abweichungen vom ursprünglichen Plan
 
-Damit das Projekt **ohne verfügbaren Compiler** als grün baubares Fundament entsteht, wurden
-drei pragmatische Verfeinerungen getroffen (jeweils sauber gekapselt, später austauschbar):
+Drei pragmatische Verfeinerungen gegenüber dem ursprünglichen Plan (jeweils sauber gekapselt,
+später austauschbar):
 
 | Plan | Umsetzung jetzt | Grund |
 |---|---|---|
@@ -43,28 +43,34 @@ drei pragmatische Verfeinerungen getroffen (jeweils sauber gekapselt, später au
 ## Datenfluss Study-Loop
 
 1. `study_get_queue` → fällige Reviews (SM-2 `due ≤ now`) + bis zu `new_cards_per_day` neue Karten.
-2. UI: Karte → Antwort → `Aufdecken` (lokales Auto-Grading für single/multi/truefalse/cloze/numeric).
+2. UI: Karte → Antwort → `Aufdecken` (lokales Auto-Grading für single/multi/truefalse/cloze/numeric;
+   Kurzantwort-Karten werden per KI bewertet, wenn ein Key hinterlegt ist).
 3. `study_submit_review(card_id, rating)` → in **einer Transaktion**: Schedule neu berechnen,
    `review_log` schreiben, XP/Streak/Tageszähler aktualisieren → `ReviewOutcome` zurück.
 4. UI aktualisiert Profil (Level/XP/Streak) sofort aus der Antwort.
 
-## KI-Schicht (Phase 2+)
+## KI-Schicht
 
-`ai/` definiert heute nur die Status-/Registry-Oberfläche; die eigentlichen Provider-Adapter
-kommen als `AiProvider`-Trait:
+`ai/` kapselt die Provider-Anbindung. `ai/mod.rs` löst Provider/Modell/Key aus den Settings + dem
+Keychain auf und ruft `ai/providers.rs` (reqwest, asynchron) auf. Tauri-Commands sind `async` und
+halten nie die DB-Sperre über ein `await`.
 
-- **Provider:** Gemini, OpenAI, Anthropic, OpenAI-kompatibel (OpenRouter/Ollama/LM Studio, custom `base_url`).
-- **Strukturierte Outputs** je Provider (json_schema / responseSchema / tool_use), serverseitig
-  gegen JSON-Schema validiert, bevor etwas in die DB gelangt.
-- **Features (in dieser Reihenfolge):** Tutor (gestreamt) → Fragengenerierung (Review-Queue) →
-  Material→Karten → Bewertung (Freitext/SQL/Essay) → Lernpfade → mündliche Prüfung.
+- **Provider:** Gemini, OpenAI, Anthropic, OpenAI-kompatibel (OpenRouter/Ollama/LM Studio, eigene
+  `base_url` in den Settings). Anfragen laufen ausschließlich über das Rust-Backend — nie aus dem
+  Webview (die CSP erlaubt dem Frontend keine externen Hosts).
+- **Aktive Features:** `ai_test_connection`, Tutor-Chat (`ai_chat`), Material→Karten
+  (`ai_generate_cards`, mit Review-Queue) und Antwort-Bewertung (`ai_grade_answer`).
+- **Robuste Outputs:** Generierung/Bewertung extrahieren den JSON-Block aus der Antwort und
+  validieren ihn (erlaubte Kartentypen, payload-Form), bevor etwas vorgeschlagen wird.
 - **Sicherheit:** Keys im Keychain, `zeroize` nach Schreiben, nie ans Frontend, nie geloggt.
-- **Degradation:** ohne Key sind KI-Buttons deaktiviert mit Hinweis; nie Sackgasse.
+- **Degradation:** ohne Key sind KI-Seiten gesperrt mit Hinweis auf die Einstellungen; nie Sackgasse.
+- **Geplant:** Streaming, Lernpfade, mündliche Prüfung.
 
 ## Phasen-Roadmap
 
-Siehe `README.md` → „Status / Roadmap". Phase 0 (Skeleton/Pipeline) und Phase 1 (Core-Study-Loop)
-sind in diesem Stand enthalten.
+Siehe `README.md` → „Status". Enthalten sind der Core-Study-Loop, Statistiken, Achievements,
+Content-Packs, Backup/Restore und die KI-Funktionen (Tutor, Material→Karten, Bewertung). Offen
+bleiben u. a. Lernpfade, mündliche Prüfung, Tests-Simulation und der Shop.
 
 ## Migrationsstrategie
 
