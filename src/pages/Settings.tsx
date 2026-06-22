@@ -4,6 +4,7 @@ import { Check, Database, Download, Eye, EyeOff, Palette, Sparkles, Trash2, Uplo
 
 import { api, errMsg } from "@/lib/api";
 import type { AiStatus } from "@/lib/types";
+import { APP_VERSION } from "@/lib/changelog";
 import { useStore } from "@/store/useStore";
 import { Button, GlassCard, Spinner } from "@/components/ui";
 
@@ -85,6 +86,9 @@ export default function Settings() {
                 </button>
               ))}
             </div>
+            <p className="mt-2 text-xs text-muted">
+              Weitere Themes & Avatare schaltest du im Shop frei.
+            </p>
           </div>
 
           <div className="flex items-center justify-between">
@@ -136,6 +140,7 @@ export default function Settings() {
 
 function DataSettings() {
   const toast = useStore((s) => s.toast);
+  const setShowChangelog = useStore((s) => s.setShowChangelog);
   const [busy, setBusy] = useState<"backup" | "restore" | null>(null);
 
   const doBackup = async () => {
@@ -206,7 +211,7 @@ function DataSettings() {
       <GlassCard className="space-y-3 text-sm">
         <div className="flex items-center justify-between">
           <span className="text-muted">Version</span>
-          <span className="font-medium">OpenLearn 0.1.0</span>
+          <span className="font-medium">OpenLearn {APP_VERSION}</span>
         </div>
         <div className="flex items-center justify-between">
           <span className="text-muted">Telemetrie</span>
@@ -215,6 +220,15 @@ function DataSettings() {
         <div className="flex items-center justify-between">
           <span className="text-muted">Lizenz</span>
           <span className="font-medium">MIT (Code)</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-muted">Changelog</span>
+          <button
+            className="font-medium text-primary hover:underline"
+            onClick={() => setShowChangelog(true)}
+          >
+            Was ist neu?
+          </button>
         </div>
         <p className="pt-2 text-muted">
           Alle Lern- und Fortschrittsdaten bleiben lokal auf deinem Gerät (SQLite). API-Keys liegen

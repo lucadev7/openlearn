@@ -1,6 +1,9 @@
 import type { ReactNode } from "react";
 import { NavLink } from "react-router-dom";
 import clsx from "clsx";
+
+import { useStore } from "@/store/useStore";
+import { avatarOf } from "@/lib/cosmetics";
 import {
   BarChart3,
   Bot,
@@ -65,14 +68,15 @@ const linkClass = ({ isActive }: { isActive: boolean }) =>
   );
 
 export function Sidebar() {
+  const avatar = avatarOf(useStore((s) => s.settings?.avatar ?? "ol"));
   return (
     <aside className="glass flex h-full w-60 shrink-0 flex-col rounded-none border-r border-border/50">
       <div className="flex items-center gap-3 px-5 py-5">
         <div
-          className="grid h-9 w-9 place-items-center rounded-xl font-bold text-white"
-          style={{ background: "linear-gradient(135deg, rgb(110 100 255), rgb(20 200 160))" }}
+          className="grid h-9 w-9 place-items-center rounded-xl text-lg font-bold text-white"
+          style={{ background: avatar.gradient }}
         >
-          OL
+          {avatar.emoji}
         </div>
         <div>
           <div className="font-semibold leading-tight">OpenLearn</div>

@@ -158,6 +158,8 @@ pub struct Settings {
     /// Base URL for the OpenAI-compatible provider (e.g. Ollama / LM Studio /
     /// OpenRouter). Ignored for the first-party providers.
     pub openai_base_url: Option<String>,
+    /// Equipped avatar cosmetic id (see the shop catalog).
+    pub avatar: String,
     pub cost_confirm: bool,
     pub onboarded: bool,
 }
@@ -173,6 +175,7 @@ impl Default for Settings {
             default_provider: None,
             default_model: None,
             openai_base_url: None,
+            avatar: "ol".into(),
             cost_confirm: true,
             onboarded: false,
         }
@@ -365,4 +368,30 @@ pub struct GradeResult {
     pub correct: bool,
     pub score: i64,
     pub feedback: String,
+}
+
+// ---------------------------------------------------------------------------
+// Cosmetic shop
+// ---------------------------------------------------------------------------
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ShopItemView {
+    pub id: String,
+    pub kind: String,
+    pub name: String,
+    pub description: String,
+    pub price: i64,
+    pub free: bool,
+    pub owned: bool,
+    pub equipped: bool,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ShopView {
+    pub coins: i64,
+    pub equipped_theme: String,
+    pub equipped_avatar: String,
+    pub items: Vec<ShopItemView>,
 }

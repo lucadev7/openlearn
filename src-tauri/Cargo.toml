@@ -1,6 +1,6 @@
 [package]
 name = "openlearn"
-version = "0.1.0"
+version = "0.2.0"
 description = "OpenLearn — gamified learning with optional AI. Local, privacy-first, offline-capable."
 authors = ["OpenLearn contributors"]
 license = "MIT"

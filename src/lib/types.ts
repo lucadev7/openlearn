@@ -135,6 +135,7 @@ export interface Settings {
   defaultProvider: string | null;
   defaultModel: string | null;
   openaiBaseUrl: string | null;
+  avatar: string;
   costConfirm: boolean;
   onboarded: boolean;
 }
@@ -227,4 +228,22 @@ export interface GradeResult {
   correct: boolean;
   score: number;
   feedback: string;
+}
+
+export interface ShopItem {
+  id: string;
+  kind: "theme" | "avatar" | string;
+  name: string;
+  description: string;
+  price: number;
+  free: boolean;
+  owned: boolean;
+  equipped: boolean;
+}
+
+export interface ShopView {
+  coins: number;
+  equippedTheme: string;
+  equippedAvatar: string;
+  items: ShopItem[];
 }

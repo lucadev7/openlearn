@@ -15,6 +15,7 @@ import type {
   Rating,
   ReviewOutcome,
   Settings,
+  ShopView,
   Stats,
   StudyCard,
 } from "./types";
@@ -23,12 +24,12 @@ export const api = {
   listDecks: () => invoke<DeckWithCounts[]>("content_list_decks"),
   getDeck: (id: string) => invoke<Deck>("content_get_deck", { id }),
   createDeck: (name: string, parentId: string | null = null) =>
-    invoke<Deck>("content_create_deck", { name, parent_id: parentId }),
+    invoke<Deck>("content_create_deck", { name, parentId }),
   renameDeck: (id: string, name: string) =>
     invoke<Deck>("content_rename_deck", { id, name }),
   deleteDeck: (id: string) => invoke<void>("content_delete_deck", { id }),
   listCards: (deckId: string) =>
-    invoke<Card[]>("content_list_cards", { deck_id: deckId }),
+    invoke<Card[]>("content_list_cards", { deckId }),
   getCard: (id: string) => invoke<Card>("content_get_card", { id }),
   upsertCard: (input: CardInput) => invoke<Card>("content_upsert_card", { input }),
   setSuspended: (id: string, suspended: boolean) =>
@@ -36,16 +37,23 @@ export const api = {
   deleteCard: (id: string) => invoke<void>("content_delete_card", { id }),
 
   getQueue: (deckId: string | null = null, newLimit: number | null = null) =>
-    invoke<StudyCard[]>("study_get_queue", { deck_id: deckId, new_limit: newLimit }),
+    invoke<StudyCard[]>("study_get_queue", { deckId, newLimit }),
   submitReview: (cardId: string, rating: Rating) =>
-    invoke<ReviewOutcome>("study_submit_review", { card_id: cardId, rating }),
+    invoke<ReviewOutcome>("study_submit_review", { cardId, rating }),
 
   getProfile: () => invoke<ProfileView>("gam_get_profile"),
   getStats: () => invoke<Stats>("stats_get"),
   listAchievements: () => invoke<Achievement[]>("achievements_list"),
 
+  shopList: () => invoke<ShopView>("shop_list"),
+  shopBuy: (itemId: string) => invoke<ShopView>("shop_buy", { itemId }),
+  shopEquip: (itemId: string) => invoke<ShopView>("shop_equip", { itemId }),
+
+  examCards: (deckId: string | null, count: number) =>
+    invoke<Card[]>("content_exam_cards", { deckId, count }),
+
   exportPack: (deckIds: string[] | null, path: string) =>
-    invoke<void>("content_export_pack", { deck_ids: deckIds, path }),
+    invoke<void>("content_export_pack", { deckIds, path }),
   importPack: (path: string) => invoke<ImportSummary>("content_import_pack", { path }),
   importExample: () => invoke<ImportSummary>("content_import_example"),
 

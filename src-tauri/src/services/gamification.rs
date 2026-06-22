@@ -44,23 +44,29 @@ pub fn award_for_review(
     };
     let xp = base + difficulty.clamp(0, 4);
 
-    let (old_xp, last_day, reviews_today, reviews_day, streak_cur, streak_long): (
+    let (old_xp, last_day, reviews_today, reviews_day, streak_cur, streak_long, old_coins): (
         i64,
         Option<String>,
         i64,
         Option<String>,
+        i64,
         i64,
         i64,
     ) = conn.query_row(
-        "SELECT xp, last_active_day, reviews_today, reviews_day, streak_current, streak_longest
+        "SELECT xp, last_active_day, reviews_today, reviews_day, streak_current, streak_longest, coins
          FROM profile WHERE id = 1",
         [],
-        |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?, r.get(5)?)),
+        |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?, r.get(5)?, r.get(6)?)),
     )?;
 
     let today = today_local();
     let yesterday = yesterday_local();
     let new_xp = old_xp + xp;
+
+    // Coins mirror earned XP, with a bonus on level-up. Cosmetic spending only.
+    let leveled_up = level_for_xp(new_xp) > level_for_xp(old_xp);
+    let coins_earned = xp + if leveled_up { 50 * level_for_xp(new_xp) } else { 0 };
+    let new_coins = old_coins + coins_earned;
 
     let reviews_today_new = if reviews_day.as_deref() == Some(today.as_str()) {
         reviews_today + 1
@@ -79,16 +85,15 @@ pub fn award_for_review(
 
     conn.execute(
         "UPDATE profile SET xp = ?1, last_active_day = ?2, reviews_today = ?3, reviews_day = ?4,
-            streak_current = ?5, streak_longest = ?6
+            streak_current = ?5, streak_longest = ?6, coins = ?7
          WHERE id = 1",
-        params![new_xp, today, reviews_today_new, today, streak_cur_new, streak_long_new],
+        params![new_xp, today, reviews_today_new, today, streak_cur_new, streak_long_new, new_coins],
     )?;
     conn.execute(
         "INSERT INTO xp_ledger (ts, source, amount) VALUES (?1, 'review', ?2)",
         params![now, xp],
     )?;
 
-    let leveled_up = level_for_xp(new_xp) > level_for_xp(old_xp);
     Ok((xp, leveled_up))
 }
 

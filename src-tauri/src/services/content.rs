@@ -149,6 +149,26 @@ pub fn get_card(conn: &Connection, id: &str) -> AppResult<Card> {
     raw.into_card()
 }
 
+/// A random sample of auto-gradable cards for a timed test. Does not touch the
+/// spaced-repetition schedule — tests are a standalone snapshot of knowledge.
+pub fn random_exam(conn: &Connection, deck_id: Option<String>, count: i64) -> AppResult<Vec<Card>> {
+    let count = count.clamp(1, 100);
+    let sql = format!(
+        "SELECT {CARD_COLS} FROM card
+         WHERE suspended = 0
+           AND type IN ('single', 'multi', 'truefalse', 'cloze', 'numeric')
+           AND (?1 IS NULL OR deck_id = ?1)
+         ORDER BY RANDOM() LIMIT ?2"
+    );
+    let mut stmt = conn.prepare(&sql)?;
+    let rows = stmt.query_map(params![deck_id, count], map_card_raw)?;
+    let mut out = Vec::new();
+    for raw in rows {
+        out.push(raw?.into_card()?);
+    }
+    Ok(out)
+}
+
 pub fn upsert_card(conn: &Connection, input: CardInput) -> AppResult<Card> {
     if input.prompt_md.trim().is_empty() {
         return Err(AppError::Invalid("Der Fragetext darf nicht leer sein.".into()));

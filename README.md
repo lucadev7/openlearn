@@ -31,16 +31,19 @@ Fachwissen oder einfach eigene Themen.
 - Decks und Karten direkt in der App anlegen und bearbeiten (mit Live-Vorschau, Markdown, Code)
 - Inhalte als Datei teilen und importieren (Content-Packs) — inklusive mitgeliefertem Beispiel-Pack
 
-**Fortschritt**
+**Fortschritt & Motivation**
 - Statistiken: Aktivitäts-Heatmap, Verlauf, Trefferquote je Deck, Karten-Reife
 - Achievements mit Fortschrittsanzeige
+- Tests & Prüfungen: zeitgesteuerte Simulation aus deinem Fragenpool, mit Auswertung
+- Shop: verdiene Coins beim Lernen und schalte Themes & Avatare frei (rein kosmetisch)
 - Backup & Wiederherstellung der gesamten lokalen Datenbank in eine Datei
 
 **KI (optional, du bringst den Key mit)**
 - Tutor-Chat, der erklärt und nachfragt
 - Karten automatisch aus eigenem Material erzeugen (mit Review-Queue)
 - Bewertung offener Antworten (Kurzantwort-Karten) mit Feedback
-- Adaptive Lernpfade aus deinem Ziel und deinen Schwächen *(geplant)*
+- Adaptive Lernpfade aus deinem Ziel, Zieldatum und deinen Schwächen
+- Mündliche Prüfung mit einem KI-Prüfer, inkl. Bewertung am Ende
 
 > KI ist nie Voraussetzung. Ohne Key bleibt der Lernkern voll nutzbar.
 
@@ -104,16 +107,17 @@ Mehr Details in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Status
 
-Nutzbar. Der Lernkern steht, dazu Statistiken, Achievements, Content-Packs, Backup/Restore und die
-KI-Funktionen (mit eigenem API-Key). Weitere Bausteine folgen schrittweise.
+Aktiv nutzbar. Lernkern, Statistiken, Achievements, Content-Packs, Backup/Restore, Shop und Tests
+sowie die KI-Funktionen (mit eigenem API-Key) sind enthalten.
 
 - [x] Lernkern: Decks/Karten, Spaced Repetition, XP/Level/Streak
-- [x] KI: Tutor, Material → Karten, Antwort-Bewertung (eigener API-Key)
+- [x] KI: Tutor, Material → Karten, Antwort-Bewertung, Lernpfade, mündliche Prüfung (eigener API-Key)
 - [x] Content-Packs: Import/Export, Beispiel-Inhalte
 - [x] Statistiken & Achievements
+- [x] Tests & Prüfungen
+- [x] Shop: Themes & Avatare (Coins fürs Lernen)
 - [x] Backup/Restore
-- [ ] Lernpfade, mündliche Prüfung, Tests-Simulation
-- [ ] Shop/Themes, Mehrsprachigkeit, weitere Politur
+- [ ] Signierte Builds, Mehrsprachigkeit, FSRS-Scheduler, gestreamte KI-Antworten
 
 ## Mitmachen
 

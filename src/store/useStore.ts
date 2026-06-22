@@ -18,6 +18,7 @@ interface AppStore {
   refreshProfile: () => Promise<void>;
   setProfile: (p: ProfileView) => void;
   saveSettings: (patch: Partial<Settings>) => Promise<void>;
+  patchSettings: (patch: Partial<Settings>) => void;
 
   toasts: Toast[];
   toast: (msg: string, kind?: Toast["kind"]) => void;
@@ -25,6 +26,9 @@ interface AppStore {
 
   celebrate: boolean;
   setCelebrate: (v: boolean) => void;
+
+  showChangelog: boolean;
+  setShowChangelog: (v: boolean) => void;
 }
 
 let nextToastId = 1;
@@ -66,6 +70,12 @@ export const useStore = create<AppStore>((set, get) => ({
     }
   },
 
+  // Update local settings only (the backend already persisted the change).
+  patchSettings: (patch) => {
+    const current = get().settings;
+    if (current) set({ settings: { ...current, ...patch } });
+  },
+
   toasts: [],
   toast: (msg, kind = "info") => {
     const id = nextToastId++;
@@ -76,4 +86,7 @@ export const useStore = create<AppStore>((set, get) => ({
 
   celebrate: false,
   setCelebrate: (v) => set({ celebrate: v }),
+
+  showChangelog: false,
+  setShowChangelog: (v) => set({ showChangelog: v }),
 }));

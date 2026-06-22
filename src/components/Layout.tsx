@@ -1,11 +1,20 @@
+import { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 
+import { useStore } from "@/store/useStore";
 import { Sidebar } from "./Sidebar";
 import { TopBar } from "./TopBar";
+import { WhatsNew, hasUnseenChangelog } from "./WhatsNew";
 
 export function Layout() {
   const location = useLocation();
+  const setShowChangelog = useStore((s) => s.setShowChangelog);
+
+  useEffect(() => {
+    if (hasUnseenChangelog()) setShowChangelog(true);
+  }, [setShowChangelog]);
+
   return (
     <div className="flex h-screen w-screen overflow-hidden text-text">
       <Sidebar />
@@ -26,6 +35,7 @@ export function Layout() {
           </AnimatePresence>
         </main>
       </div>
+      <WhatsNew />
     </div>
   );
 }

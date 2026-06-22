@@ -4,5 +4,6 @@ pub mod content;
 pub mod data;
 pub mod gamification;
 pub mod settings;
+pub mod shop;
 pub mod stats;
 pub mod study;

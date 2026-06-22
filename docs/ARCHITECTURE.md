@@ -8,7 +8,7 @@ React (Vite + TS + Tailwind + Framer Motion)
    ▼
 Rust-Backend  =  Source of Truth
    ├─ commands/   dünne IPC-Schicht (#[tauri::command])
-   ├─ services/   Domänenlogik: content, study, gamification, settings, stats, achievements, data
+   ├─ services/   Domänenlogik: content, study, gamification, settings, shop, stats, achievements, data
    ├─ scheduler   Spaced-Repetition (Trait + SM-2; FSRS als Upgrade geplant)
    ├─ db/         SQLite (rusqlite, bundled) + Migrationsrunner
    ├─ secret      API-Keys im OS-Keychain (keyring)
@@ -69,8 +69,9 @@ halten nie die DB-Sperre über ein `await`.
 ## Phasen-Roadmap
 
 Siehe `README.md` → „Status". Enthalten sind der Core-Study-Loop, Statistiken, Achievements,
-Content-Packs, Backup/Restore und die KI-Funktionen (Tutor, Material→Karten, Bewertung). Offen
-bleiben u. a. Lernpfade, mündliche Prüfung, Tests-Simulation und der Shop.
+Content-Packs, Backup/Restore, Shop (Themes/Avatare), Tests/Prüfungen und die KI-Funktionen
+(Tutor, Material→Karten, Bewertung, Lernpfade, mündliche Prüfung). Offen bleiben u. a. signierte
+Builds, ein FSRS-Scheduler und gestreamte KI-Antworten.
 
 ## Migrationsstrategie
 

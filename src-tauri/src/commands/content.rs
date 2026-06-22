@@ -102,3 +102,13 @@ pub fn content_import_example(state: State<AppState>) -> AppResult<ImportSummary
     let mut conn = state.db.lock().unwrap();
     content::import_example(&mut conn)
 }
+
+#[tauri::command]
+pub fn content_exam_cards(
+    state: State<AppState>,
+    deck_id: Option<String>,
+    count: i64,
+) -> AppResult<Vec<Card>> {
+    let conn = state.db.lock().unwrap();
+    content::random_exam(&conn, deck_id, count)
+}

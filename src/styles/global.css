@@ -40,6 +40,113 @@
   --ol-shadow: 30 41 70;
 }
 
+/* ── Premium themes (unlocked in the shop) ─────────────────────────────── */
+[data-theme="midnight"] {
+  --ol-bg: 8 11 20;
+  --ol-surface: 15 20 36;
+  --ol-surface-2: 24 31 52;
+  --ol-border: 44 54 84;
+  --ol-text: 224 230 244;
+  --ol-muted: 138 148 176;
+  --ol-primary: 96 130 255;
+  --ol-primary-soft: 79 110 240;
+  --ol-accent: 56 189 248;
+  --ol-success: 52 211 153;
+  --ol-warn: 251 191 36;
+  --ol-danger: 248 113 113;
+  --ol-shadow: 0 0 0;
+}
+[data-theme="sunset"] {
+  --ol-bg: 26 16 18;
+  --ol-surface: 38 24 26;
+  --ol-surface-2: 54 34 36;
+  --ol-border: 84 56 54;
+  --ol-text: 245 232 226;
+  --ol-muted: 188 158 150;
+  --ol-primary: 251 146 60;
+  --ol-primary-soft: 249 115 22;
+  --ol-accent: 244 114 182;
+  --ol-success: 134 239 172;
+  --ol-warn: 250 204 21;
+  --ol-danger: 248 113 113;
+  --ol-shadow: 0 0 0;
+}
+[data-theme="forest"] {
+  --ol-bg: 10 20 15;
+  --ol-surface: 16 30 23;
+  --ol-surface-2: 24 44 34;
+  --ol-border: 42 70 54;
+  --ol-text: 224 240 230;
+  --ol-muted: 140 170 152;
+  --ol-primary: 52 211 153;
+  --ol-primary-soft: 16 185 129;
+  --ol-accent: 163 230 53;
+  --ol-success: 74 222 128;
+  --ol-warn: 250 204 21;
+  --ol-danger: 248 113 113;
+  --ol-shadow: 0 0 0;
+}
+[data-theme="ocean"] {
+  --ol-bg: 8 18 26;
+  --ol-surface: 13 28 40;
+  --ol-surface-2: 20 42 58;
+  --ol-border: 38 66 88;
+  --ol-text: 220 236 244;
+  --ol-muted: 134 162 180;
+  --ol-primary: 34 211 238;
+  --ol-primary-soft: 6 182 212;
+  --ol-accent: 45 212 191;
+  --ol-success: 52 211 153;
+  --ol-warn: 251 191 36;
+  --ol-danger: 248 113 113;
+  --ol-shadow: 0 0 0;
+}
+[data-theme="rose"] {
+  --ol-bg: 24 14 20;
+  --ol-surface: 36 22 30;
+  --ol-surface-2: 52 32 42;
+  --ol-border: 84 54 68;
+  --ol-text: 246 230 238;
+  --ol-muted: 190 156 172;
+  --ol-primary: 244 114 182;
+  --ol-primary-soft: 236 72 153;
+  --ol-accent: 251 146 130;
+  --ol-success: 134 239 172;
+  --ol-warn: 250 204 21;
+  --ol-danger: 248 113 113;
+  --ol-shadow: 0 0 0;
+}
+[data-theme="mono"] {
+  --ol-bg: 12 12 14;
+  --ol-surface: 22 22 25;
+  --ol-surface-2: 32 32 36;
+  --ol-border: 58 58 64;
+  --ol-text: 232 232 236;
+  --ol-muted: 150 150 158;
+  --ol-primary: 99 102 120;
+  --ol-primary-soft: 130 130 142;
+  --ol-accent: 150 150 162;
+  --ol-success: 120 200 150;
+  --ol-warn: 220 200 120;
+  --ol-danger: 230 130 130;
+  --ol-shadow: 0 0 0;
+}
+[data-theme="neon"] {
+  --ol-bg: 7 7 12;
+  --ol-surface: 16 14 24;
+  --ol-surface-2: 26 22 38;
+  --ol-border: 60 40 90;
+  --ol-text: 236 232 248;
+  --ol-muted: 158 150 180;
+  --ol-primary: 217 70 239;
+  --ol-primary-soft: 168 85 247;
+  --ol-accent: 34 211 238;
+  --ol-success: 74 222 128;
+  --ol-warn: 250 204 21;
+  --ol-danger: 251 113 133;
+  --ol-shadow: 0 0 0;
+}
+
 @layer base {
   * {
     border-color: rgb(var(--ol-border) / 0.6);
